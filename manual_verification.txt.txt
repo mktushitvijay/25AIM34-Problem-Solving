@@ -1,0 +1,126 @@
+25AIM34 - Problem Solving
+Manual Binary Verification
+
+Name  :M K Tushit Vijay
+USN   :1NH25AI092-T
+Group :3
+
+=====================================================
+QUESTION 1: Signed 8-bit 2's complement arithmetic
+=====================================================
+
+-----------------------------------------------------
+a) +46 + (+29)
+-----------------------------------------------------
++46 = 32 + 8 + 4 + 2      = 00101110
++29 = 16 + 8 + 4 + 1      = 00011101
+
+Binary addition:
+
+    00101110    (+46)
+  + 00011101    (+29)
+  ----------
+    01001011
+
+Result in decimal: 64 + 8 + 2 + 1 = +75
+Carry out of MSB : 0
+Sign bits        : +ve and +ve -> result sign bit 0 (+ve)
+Overflow         : NO (operand signs and result sign are consistent)
+
+Program output   : 01001011 = 75, overflow NO
+Verification     : MATCHES
+
+
+-----------------------------------------------------
+b) (-48) - (-23)
+-----------------------------------------------------
+Step 1: Represent +48 and take 2's complement to get -48
+  +48         = 00110000
+  Invert      = 11001111
+  Add 1       = 11010000     -> -48
+
+Step 2: Represent +23 and take 2's complement to get -23
+  +23         = 00010111
+  Invert      = 11101000
+  Add 1       = 11101001     -> -23
+
+Step 3: Subtraction A - B is done as A + (2's complement of B)
+  B = -23 = 11101001
+  Invert      = 00010110
+  Add 1       = 00010111     -> +23
+
+Step 4: Add A and (-B)
+
+    11010000    (-48)
+  + 00010111    (+23)
+  ----------
+    11100111
+
+Step 5: Convert result back to decimal
+  Sign bit = 1, so the result is negative
+  Invert      = 00011000
+  Add 1       = 00011001 = 25
+  Result      = -25
+
+Carry out of MSB : 0
+Overflow         : NO (operands -48 and +23 have different signs when
+                   added, so overflow cannot occur; result -25 lies in
+                   the range -128 to +127)
+
+Program output   : 11100111 = -25, overflow NO
+Verification     : MATCHES
+
+
+=====================================================
+QUESTION 2: Rotate operations on 11010101
+=====================================================
+
+-----------------------------------------------------
+a) ROR (rotate right, no carry) by 3 positions
+-----------------------------------------------------
+Each step: the LSB moves out and re-enters at the MSB.
+
+  Original : 11010101
+  Step 1   : 11101010     (LSB 1 moved to front)
+  Step 2   : 01110101     (LSB 0 moved to front)
+  Step 3   : 10111010     (LSB 1 moved to front)
+
+Final result     : 10111010
+
+Program output   : 10111010
+Verification     : MATCHES
+
+
+-----------------------------------------------------
+b) RCR (rotate right through carry) by 3 positions
+-----------------------------------------------------
+The carry flag (CF) acts as a 9th bit.
+Each step: LSB goes into CF, old CF enters at the MSB.
+
+The question does not give the initial carry, so CF = 0 is assumed.
+CF = 1 is also worked out for completeness.
+
+Case 1: initial CF = 0
+
+  Original : 11010101   CF = 0
+  Step 1   : 01101010   CF = 1   (LSB 1 -> CF, old CF 0 -> MSB)
+  Step 2   : 10110101   CF = 0   (LSB 0 -> CF, old CF 1 -> MSB)
+  Step 3   : 01011010   CF = 1   (LSB 1 -> CF, old CF 0 -> MSB)
+
+  Final result : 01011010
+  Initial CF   : 0
+  Final CF     : 1
+
+Case 2: initial CF = 1
+
+  Original : 11010101   CF = 1
+  Step 1   : 11101010   CF = 1   (LSB 1 -> CF, old CF 1 -> MSB)
+  Step 2   : 11110101   CF = 0   (LSB 0 -> CF, old CF 1 -> MSB)
+  Step 3   : 01111010   CF = 1   (LSB 1 -> CF, old CF 0 -> MSB)
+
+  Final result : 01111010
+  Initial CF   : 1
+  Final CF     : 1
+
+Program output   : matches both cases above
+Verification     : MATCHES
